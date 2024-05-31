@@ -21,6 +21,12 @@ class Bombon {
 	method libreGluten() { return true }
 }
 
+class BombonDuro inherits Bombon {
+	override method mordisco(){
+		peso = peso - 1
+	}
+	method gradoDeDureza() = if(peso > 12) 3 else if (peso.between(8, 12)) 2 else 1
+}
 
 class Alfajor {
 	var peso = 15
@@ -34,14 +40,21 @@ class Alfajor {
 
 class Caramelo {
 	var peso = 5
+	var property sabor = frutilla
 
 	method precio() { return 12 }
 	method peso() { return peso }
 	method mordisco() { peso = peso - 1 }
-	method sabor() { return frutilla }
 	method libreGluten() { return true }
 }
 
+class CarameloConCorazonDeChocolate inherits Caramelo {
+	override method mordisco(){
+		super()
+		self.sabor(chocolate)
+	}
+	override method precio() = super() + 1
+}
 
 class Chupetin {
 	var peso = 7
@@ -75,6 +88,18 @@ class Oblea {
 	method libreGluten() { return false }
 }
 
+class ObleaCrujiente inherits Oblea {
+	var cantidadDeMordiscos = 0
+	override method mordisco(){
+		super()
+		cantidadDeMordiscos += 1
+		if (cantidadDeMordiscos <= 3){
+			peso -= 3
+		}
+	}
+	method estaDebil() = cantidadDeMordiscos > 3
+}
+
 class Chocolatin {
 	// hay que acordarse de *dos* cosas, el peso inicial y el peso actual
 	// el precio se calcula a partir del precio inicial
@@ -88,7 +113,20 @@ class Chocolatin {
 	method mordisco() { comido = comido + 2 }
 	method sabor() { return chocolate }
 	method libreGluten() { return false }
+}
 
+object heladeraDeMariano {
+	/* el coeficiente de humedad debe ser un número entre 0 y 1*/
+	var property humedad = 0
+}
+
+class ChocolatinVIP inherits Chocolatin {
+	override method peso() = super() * (1 + self.humedad())
+	method humedad() = heladeraDeMariano.humedad()
+}
+
+class ChocolatinPremium inherits ChocolatinVIP{
+	override method humedad() = super() / 2
 }
 
 class GolosinaBaniada {
@@ -109,7 +147,7 @@ class GolosinaBaniada {
 
 class Tuttifrutti {
 	var libreDeGluten
-	var sabores = [frutilla, chocolate, naranja]
+	const sabores = [frutilla, chocolate, naranja]
 	var saborActual = 0
 	
 	method mordisco() { saborActual += 1 }	
